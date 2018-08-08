@@ -19,7 +19,7 @@ randn('seed',algorithm_params.seed);
 
 % Set up optimization options.
 options = struct('Display','iter','LS_init',2,'LS',2,'Method','lbfgs',...
-    'MaxFunEvals',4000,'MaxIter',2000);
+    'MaxFunEvals',4000,'MaxIter',200);
 if verbosity < 2,
     options.display = 'none';
 end;

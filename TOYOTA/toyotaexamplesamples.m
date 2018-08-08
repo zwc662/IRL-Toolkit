@@ -41,6 +41,6 @@ example_samples = cell(1, T);
 
 for t = 1:T,
     % Turn each observation (including action) to state
-    [s, a] = toyotaobservationtostateaction(mdp_params, observation_data(t, :));
+    [s, a] = toyotaobservationtostateaction_(mdp_params, observation_data(t, :));
     example_samples{1, t} = [s;a];
 end;
