@@ -40,27 +40,31 @@ addpaths;
 test_params = setdefaulttestparams(test_params);
 
 % Construct MDP and features.
+fprintf(strcat(mdp,'build'));
 [mdp_data,r,feature_data,true_feature_map] = feval(strcat(mdp,'build'),mdp_params);
 if ~isempty(test_params.true_features),
     true_feature_map = test_params.true_features;
 end;
-
+fprintf('\nThis message is sent at time %s\n', datestr(now,'HH:MM:SS.FFF'))
 % Solve example.
 mdp_solution = feval(strcat(mdp_model,'solve'),mdp_data,r);
 
 % Sample example trajectories.
-if isempty(test_params.true_examples),
+if strcmp(mdp, 'toyota'),
+    example_samples = feval(strcat(mdp,'examplesamples'),mdp_params);
+elseif isempty(test_params.true_examples),
     example_samples = sampleexamples(mdp_model,mdp_data,mdp_solution,test_params);
 else
     example_samples = test_params.true_examples;
 end;
-
+fprintf('\nThis message is sent at time %s\n', datestr(now,'HH:MM:SS.FFF'))
 % Run IRL algorithm.
 irl_result = feval(strcat(algorithm,'run'),algorithm_params,mdp_data,mdp_model,...
     feature_data,example_samples,true_feature_map,test_params.verbosity);
-
+fprintf('\nThis message is sent at time %s\n', datestr(now,'HH:MM:SS.FFF'))
 % Evaluate result.
 test_result = evaluateirl(irl_result,r,example_samples,mdp_data,mdp_params,...
     mdp_solution,mdp,mdp_model,test_params.test_models,...
     test_params.test_metrics,feature_data,true_feature_map);
 test_result.algorithm = algorithm;
+fprintf('\nThis message is sent at time %s\n', datestr(now,'HH:MM:SS.FFF'))

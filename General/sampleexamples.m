@@ -23,3 +23,5 @@ for i=1:N,
         s = feval(strcat(mdp_model,'step'),mdp_data,mdp_solution,s,a);
     end;
 end;
+
+example_samples

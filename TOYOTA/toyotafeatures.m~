@@ -1,0 +1,111 @@
+% Construct the raw features for the toyota domain.
+function [feature_data, true_feature_map, r] = toyotafeatures(mdp_params, mdp_data)
+
+% mdp_params - definition of MDP domain
+% mdp_data - generic definition of domain
+% feature_data - generic feature data:
+%   splittable - matrix of states to features
+%   stateadjacency - sparse state adjacency matrix
+
+% Fill in default parameters.
+mdp_params = toyotadefaultparams(mdp_params);
+
+% Construct adjacency table.
+stateadjacency = sparse([], [], [], mdp_data.states, ...
+    mdp_data.states * mdp_data.actions);
+for s = 1:mdp_data.states,
+    for a = 1:mdp_data.actions,
+        stateadjacency(s, mdp_data.sa_s(s, a, 1)) = 1;
+    end;
+end;
+
+% Construct split table.
+% Features are the following:
+% 1...lane - lane position of ego car
+% 2...speed - speed of ego car
+% 3...lane_c1 - lane position of car1
+% 4...dist_c1 - relative distance to car1
+% 5...spd_c1 - relative speed of car1
+% 6...lane_c2 - lane position of car2
+% 7...dist_c2 - relative distance to car2
+% 8...dist_c5 - relative speed of car2
+% (For continuous)9...||s-s'||_2 - Euclid distance to 40 centroid points
+
+f_lane = 1;
+f_speed = f_lane + mdp_params.lanes;
+f_lane_c1 = f_speed + mdp_params.speed;
+f_dist_c1 = f_lane_c1 + mdp_params.speed;
+f_spd_c1 = f_dist_c1 + mdp_params.distance;
+f_lane_c2 = f_speed + mdp_params.speed;
+f_dist_c2 = f_lane_c2 + mdp_params.lanes;
+f_spd_c2 = f_dist_c2 + mdp_params.distance;
+f = f_spd_c2 + mdp_params.speed - 1;
+
+% (For continuous)
+centroids = floor(mdp_params.states/40) * (1:40);
+centroids = centroids/mdp_params.states;
+
+% Discrete feature uses one-hot coding to indicate the features in binary.
+splittable = zeros(mdp_data.states, f);
+% Continuous feature just fill in the feature value
+splittablecont = zeros(mdp_data.states, 8);
+
+for s = 1:mdp_data.states,
+    [lane, spd,...
+        lane_c1, dist_c1, spd_c1,...
+        lane_c2, dist_c2, spd_c2] = toyotastatetocoord(s, mdp_params);
+    
+    % Write feature 1 ~ 8 to discrete feature table
+    splittable(s, f_lane + lanes - 1) = 1;
+    splittable(s, f_speed + speed - 1) = 1;
+    splittable(s, f_lane_c1 + lane_c1 - 1) = 1;
+    splittable(s, f_dist_c1 + dist_c1 - 1) = 1;
+    splittable(s, f_spd_c1 + spd_c1 - 1) = 1;
+    splittable(s, f_lane_c2 + lane_c2 - 1) = 1;
+    splittable(s, f_dist_c2 + dist_c2 - 1) = 1;
+    splittable(s, f_spd_c2 + spd_c2 - 1) = 1;
+    % (TBD) Write feature 9
+    
+    % Write normalized feature 1 ~ 8 to continuous feature table
+    splittablecont(s) = [lane/mdp_params.lanes, spd/mdp_params.speed,
+        lane_c1/mdp_params.lanes, dist_c1/mdp_params.distance, spd_c1/mdp_params.speed,...
+        lane_c2/mdp_params.lanes, dist_c2/mdp_params.distance, spd_c2/mdp_params.speed];
+    splittablecont(s) = [splitablecont(s), 
+end;   
+
+
+% Construct hand-made reward mapping
+R_SCALE = 5;
+r = zeros(mdp_data.states, 1);
+for s = 1:mdp_data.states,
+    [lane, spd,...
+        lane_c1, dist_c1, spd_c1,...
+        lane_c2, dist_c2, spd_c2] = toyotastatetocoord(s, mdp_params);
+    % Be in the different lanes from other cars
+    % Drive faster when being far away from other cars
+    if (lane_c1 ~= lane || lane_c2 ~= lane) && (spd > 2) ||...
+            (abs(dist_c1 - mdp_params.distance/2) >= 1 && (spd_c1 > (mdp_params.speed/2 + 1)) || ...
+            abs(dist_c2 - mdp_params.distance/2) >= 1 && (spd_c2 > (mdp_params.speed/2 + 1))),
+        r(s) = 1.0;
+    end;
+    
+    % Don't be too slow when other cars are far away.
+    % Don't drive too faster when other cars are too slow in the same lane.
+    if (spd <= 2 && dist_c1 >= mdp_params.distance - 1 && dist_c2 >= mdp_params.distance - 1) ||...
+            (lane_c1 == lane && abs(dist_c1 - mdp_params.distance/2) <= 1 && spd_c1 <= mdp_params.spd/2) ||...
+            (lane_c2 == lane && abs(dist_c2 - mdp_params.distance/2) <= 1 && spd_c2 <= mdp_params.spd/2),
+        r(s) = -1.0;
+    end;
+end;    
+    
+r = repmat(r * R_SCALE,1,mdp_params.actions);    
+
+if mdp_params.continuous,
+    % Return continuous feature data structure.
+    feature_data.splittable = splittablecont;
+    feature_data.altsplittable = splittable;
+else,
+    % Return discrete feature data structure.
+    feature_data = struct('stateadjacency',stateadjacency,'splittable',splittable);
+end;
+    

@@ -29,8 +29,11 @@ addpath LEARCH
 addpath OptV
 addpath AN
 addpath MWAL
+addpath deepGPIRL
+addpath deepGPIRL/utils
 
 % Example MDPs.
 addpath Gridworld
 addpath Objectworld
 addpath Highway
+addpath Binaryworld
