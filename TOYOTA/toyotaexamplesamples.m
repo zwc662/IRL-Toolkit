@@ -34,7 +34,7 @@ for t = 1:T,
     observation_data(t, 8) = car_2(t, 4) - car(t, 4);
     % action;
     if t > 1,
-        change_lane = int64(car(t, 1) > car(t - 1, 1)) * 3;
+        change_lane = int64(abs(car(t, 1) - car(t - 1, 1)) > 0) * 3;
     else,
         change_lane = 0;
     end;

@@ -104,13 +104,12 @@ for lane = 1:mdp_params.lanes,
                                 end;
                                 % Naive select of the transition function
                                 % The actions take effect immediately
-                                %sa_s(s,:,:) = repmat(successors,[1,actions,1]);
+                                sa_s(s,:,:) = repmat(successors,[1,actions,1]);
                  
                                 % True transition function
                                 % The actions almost never take effect
-                                
-                                successors = s * ones(1, 1, actions);
-                                sa_s(s,:,:) = repmat(successors,[1,actions,1]);
+                                %successors = s * ones(1, actions, 1)
+                                %sa_s(s,:,:) = repmat(successors,[1,actions,1]);
 
                                 sa_p(s,:,:) = reshape(eye(actions,actions)*mdp_params.determinism +...
                                     (ones(actions,actions)-eye(actions,actions))*((1.0-mdp_params.determinism)/(actions - 1)),...
