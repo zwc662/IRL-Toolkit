@@ -35,7 +35,7 @@ end;
 
 % Define car 1 distance coordiante
 %distances = [-30, -5, 5, 30, Inf]
-distances = [-20, 20, Inf];
+distances = [-10, 10, Inf];
 dist_1 = 0;
 for i = 1:mdp_params.distance,
     if observation(6) <= distances(i),
@@ -66,7 +66,7 @@ end;
 
 % Define car 1 distance coordiante
 %distances = [-30, -5, 5, 30, Inf]
-distances = [-20, 20, Inf];
+distances = [-10, 10, Inf];
 dist_2 = 0;
 for i = 1:mdp_params.distance,
     if observation(7) <= distances(i),
