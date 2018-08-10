@@ -14,8 +14,8 @@ else,
 end;
 
 % Define speed interval and find speed coordinate
-%speeds = [0, 10, 20, 40, 50, Inf];
-speeds = [0, 10, 40, Inf];
+speeds = [0, 10, 20, 40, 60, Inf];
+%speeds = [0, 10, 40, Inf];
 spd = 0;
 for i = 1:mdp_params.speed,
     if observation(2) <= speeds(i),
@@ -34,8 +34,8 @@ else,
 end;
 
 % Define car 1 distance coordiante
-%distances = [-30, -5, 5, 30, Inf]
-distances = [-10, 10, 30, Inf];
+distances = [-15, -5, 5, 20, 40, Inf];
+%distances = [-10, 10, 30, Inf];
 dist_1 = 0;
 for i = 1:mdp_params.distance,
     if observation(6) <= distances(i),
@@ -45,8 +45,8 @@ for i = 1:mdp_params.distance,
 end;
 
 % Define car 1 speed coordinate
-%speeds = [-30, -10, 0, 10, 30, Inf];
-speeds = [-10, 0, 10, Inf];
+speeds = [-10, 0, 10, 20, 30, Inf];
+%speeds = [-10, 0, 10, Inf];
 spd_1 = 0;
 for i = 1:mdp_params.speed,
     if observation(5) <= speeds(i),
@@ -65,8 +65,8 @@ else,
 end;
 
 % Define car 1 distance coordiante
-%distances = [-30, -5, 5, 30, Inf]
-distances = [-10, 10, 30, Inf];
+distances = [-15, -5, 5, 20, 40, Inf];
+%distances = [-10, 10, 30, Inf];
 dist_2 = 0;
 for i = 1:mdp_params.distance,
     if observation(7) <= distances(i),
@@ -76,8 +76,8 @@ for i = 1:mdp_params.distance,
 end;
 
 % Define car 1 speed coordinate
-%speeds = [-30, -10, 0, 10, 30, Inf];
-speeds = [-10, 0, 10, Inf];
+speeds = [-10, 0, 10, 20, 30, Inf];
+%speeds = [-10, 0, 10, Inf];
 spd_2 = 0;
 for i = 1:mdp_params.speed,
     if observation(8) <= speeds(i),
