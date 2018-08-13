@@ -33,11 +33,13 @@ for t = 1:T,
     % relative speed of car_1;
     observation_data(t, 8) = car_2(t, 4) - car(t, 4);
     % action;
+    change_lane = 0;
     if t > 1,
-        change_lane = int64(abs(car(t, 1) - car(t - 1, 1)) > 0) * 3;
-    else,
-        change_lane = 0;
+        if (car(t, 1) - (-41)) * (car(t, 1) - car(t - 1, 1)) < 0;
+            change_lane = 1;
+        end;
     end;
+    change_lane = change_lane * 3;
     action = int64(change_lane + car(t, 5) - 2);
     observation_data(t, 9) = action;
 

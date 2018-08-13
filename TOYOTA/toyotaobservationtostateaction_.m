@@ -34,7 +34,7 @@ else,
 end;
 
 % Define car 1 distance coordiante
-distances = [-15, -5, 5, 20, 40, Inf];
+distances = [-20, -5, 5, 20, Inf];
 %distances = [-10, 10, 30, Inf];
 dist_1 = 0;
 for i = 1:mdp_params.distance,
@@ -65,7 +65,7 @@ else,
 end;
 
 % Define car 1 distance coordiante
-distances = [-15, -5, 5, 20, 40, Inf];
+distances = [-20, -5, 5, 20, Inf];
 %distances = [-10, 10, 30, Inf];
 dist_2 = 0;
 for i = 1:mdp_params.distance,
